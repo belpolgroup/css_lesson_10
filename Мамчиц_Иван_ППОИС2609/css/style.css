@@ -119,6 +119,13 @@ main {
   margin-bottom: 1.5rem;
 }
 
+a.nav-link:focus-visible, .logout-btn:focus-visible {
+  font-size: larger;
+  color: white;
+  outline: 2px solid #eed115;
+  border-radius: 5px;
+}
+
 /* Декоративные элементы уровня PRO */
 .meta-list {
   background-color: #f8f9fa;
