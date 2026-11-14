@@ -33,6 +33,10 @@ body {
   padding: 1rem 1.5rem;
   border-radius: 6px;
   margin-bottom: 2rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .logo {
@@ -70,6 +74,11 @@ body {
   background-color: #e03131;
 }
 
+main {
+  display: flex;
+  flex-wrap: wrap;
+}
+
 /* Декоративные стили карточек дашборда */
 .stat-card {
   background-color: white;
@@ -77,13 +86,14 @@ body {
   padding: 1.5rem;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   border: 1px solid #e9ecef;
+  flex-basis: calc((6 * 12px) + 180px); /*Индивидуальное значение ширины каточки (Мамчиц = 6 букв)*/
 }
 
 .stat-card.is-lead {
   border-left: 5px solid #4c6ef5;
 }
 
-.card-header h3 {
+.card-header h2 {
   font-size: 1.15rem;
   color: #495057;
 }
@@ -122,3 +132,10 @@ body {
   background-color: #edf2ff;
   color: #4c6ef5;
 }
+
+/*
+1. Флекс-элементы удерживают свою высоту одинаковой за счет свойства по умолчанию align-items: stretch, 
+которое растягивает элементы по всей доступной высоте
+2. Значение auto в свойстве flex-basis расчитывает ширину элемента на основе его контента, 
+если размер элемента не указан явно 
+*/
