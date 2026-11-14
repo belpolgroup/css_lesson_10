@@ -99,6 +99,8 @@ main {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   border: 1px solid #e9ecef;
   flex-basis: calc((6 * 12px) + 180px); /*Индивидуальное значение ширины каточки (Мамчиц = 6 букв)*/
+  display: flex;
+  flex-direction: column;
 }
 
 .stat-card.is-lead {
