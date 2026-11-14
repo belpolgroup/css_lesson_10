@@ -1,0 +1,164 @@
+:root {
+  --N: 11;
+  --M: 4;
+}
+
+/* Оформление страницы */
+body {
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
+  background-color: #f4f6f9;
+  color: #212529;
+  padding: 2rem;
+  line-height: 1.5;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  border: 0;
+  padding: 0;
+  white-space: nowrap;
+  clip-path: inset(100%);
+  clip: rect(0 0 0 0);
+  overflow: hidden;
+}
+
+/* Декоративные стили шапки */
+.main-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: calc((var(--M) * 2px) + 4px);
+  background-color: #1a1a2e;
+  color: white;
+  padding: 1rem 1.5rem;
+  border-radius: 6px;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.logo {
+  font-weight: 700;
+  font-size: 1.25rem;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+.nav-menu ul {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: calc((var(--M) * 2px) + 4px);
+  flex-wrap: wrap;
+}
+
+.nav-link {
+  color: #adb5bd;
+  font-weight: 500;
+  transition: color 0.2s ease;
+  /* запрещаем автоматический перенос текста на новую строку */
+  white-space: nowrap;
+}
+
+.nav-link:hover {
+  color: white;
+}
+
+.logout-btn {
+  background-color: #fa5252;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-weight: bold;
+  transition: background-color 0.2s ease;
+  /* запрещаем автоматический перенос текста на новую строку */
+  white-space: nowrap;
+  margin-left: auto;
+}
+
+.logout-btn:hover {
+  background-color: #e03131;
+}
+
+.dashboard-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc((var(--M) * 2px) + 4px);
+}
+
+/* Декоративные стили карточек дашборда */
+.stat-card {
+  flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis: calc((var(--N) * 12px) + 180px);
+  min-width: 0;
+  overflow-wrap: break-word;
+  background-color: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e9ecef;
+}
+
+.stat-card.is-lead {
+  border-left: 5px solid #4c6ef5;
+}
+
+.card-header h2 {
+  font-size: 1.15rem;
+  color: #495057;
+}
+
+.card-desc {
+  color: #6c757d;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Декоративные элементы уровня PRO */
+.meta-list {
+  background-color: #f8f9fa;
+  padding: 0.8rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+}
+
+.meta-list dt {
+  font-weight: 600;
+  color: #495057;
+}
+
+.meta-list dd {
+  color: #212529;
+  margin-bottom: 0.2rem;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: 4px;
+  background-color: #edf2ff;
+  color: #4c6ef5;
+}
+
+/*
+Ответы на вопросы
+
+1. Флекс-элементы удерживают свою высоту одинаковой в рамках одного ряда 
+из-за свойства align-items: stretch, которое стоит у флекс-контейнера 
+по умолчанию
+
+2. flex-basis: auto говорит элементу занять ровно столько места, сколько требует 
+его содержимое.
+*/
