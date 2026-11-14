@@ -38,12 +38,20 @@ body {
   justify-content: space-between;
   align-items: center;
   gap: calc(4 * 2px + 4px); /*Индивидуальное значение расстояния между элементами (Иван = 4 буквы)*/
+  flex-wrap: wrap;
+  min-width: 220px;
 }
 
 .logo {
   font-weight: 700;
   font-size: 1.25rem;
   letter-spacing: -0.02em;
+  flex-shrink: 1;
+}
+
+.nav-menu {
+  flex-shrink: 1;
+  min-width: 50px;
 }
 
 .nav-menu ul {
@@ -70,6 +78,7 @@ body {
   font-weight: bold;
   transition: background-color 0.2s ease;
   margin-left: auto;
+  flex-shrink: 0;
 }
 
 .logout-btn:hover {
