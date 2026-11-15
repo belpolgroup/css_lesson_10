@@ -1,14 +1,13 @@
 name: Автоматическая проверка Dashboard (Flexbox & Git CI)
 
 on:
-  pull_request_target:
-    branches: [ main ]
+  pull_request:
+    branches: [main]
     types: [opened, synchronize, reopened, edited]
   workflow_dispatch:
 
 permissions:
   contents: read
-  pull-requests: write # Разрешаем роботу писать комментарии и делать review в PR из форков
 
 concurrency:
   group: flex-homework-${{ github.event.pull_request.number || github.run_id }}
@@ -24,7 +23,7 @@ jobs:
       - name: Проверка исходного кода студента
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
+          ref: ${{ github.event.pull_request.head.sha || github.ref }}
           fetch-depth: 0
 
       - name: Умный статический анализ кода и коммитов
@@ -37,43 +36,61 @@ jobs:
           export LC_ALL=C.UTF-8
           git config core.quotepath off
 
-          # Инициализация счетчиков и отчета
           errors_count=0
           warnings_count=0
           report="### 🤖 Отчет робота-валидатора по практической работе №10"$'\n\n'
 
-          add_err() { errors_count=$((errors_count+1)); report+="❌ **ОШИБКА:** $1"$'\n'; }
-          add_warn() { warnings_count=$((warnings_count+1)); report+="⚠️ **ПРЕДУПРЕЖДЕНИЕ:** $1"$'\n'; }
-          add_ok() { report+="✅ $1"$'\n'; }
+          add_err() {
+            errors_count=$((errors_count + 1))
+            report+="❌ **ОШИБКА:** $1"$'\n'
+          }
 
-          # 1. Получение списка ВСЕХ измененных и УДАЛЕННЫХ (D) файлов
-          if ! git fetch --no-tags --quiet origin "+refs/heads/${BASE_REF}:refs/remotes/origin/${BASE_REF}"; then
+          add_warn() {
+            warnings_count=$((warnings_count + 1))
+            report+="⚠️ **ПРЕДУПРЕЖДЕНИЕ:** $1"$'\n'
+          }
+
+          add_ok() {
+            report+="✅ $1"$'\n'
+          }
+
+          # Получаем целевую ветку для сравнения.
+          if ! git fetch --no-tags --quiet origin \
+            "+refs/heads/${BASE_REF}:refs/remotes/origin/${BASE_REF}"; then
             echo "::error::Не удалось получить целевую ветку."
             exit 1
           fi
 
+          # Список измененных, добавленных, скопированных, переименованных
+          # и удаленных файлов.
           changed_files=()
-          while IFS= read -r -d '' f; do changed_files+=("$f"); done \
-            < <(git diff --name-only -z --diff-filter=ACMRD "origin/${BASE_REF}...HEAD")
+          while IFS= read -r -d '' file; do
+            changed_files+=("$file")
+          done < <(
+            git diff --name-only -z --diff-filter=ACMRD \
+              "origin/${BASE_REF}...HEAD"
+          )
 
-          # Проверка, что PR вообще содержит изменения
-          if [ ${#changed_files[@]} -eq 0 ]; then
+          if [ "${#changed_files[@]}" -eq 0 ]; then
             add_err "В Вашем Pull Request не найдено ни одного измененного файла."
           fi
 
-          # 2. Проверка изоляции и определение папки студента
+          # Проверка изоляции и определение папки студента.
           STUDENT_DIR=""
-          for f in "${changed_files[@]}"; do
-            if [[ "$f" =~ ^\.github/ ]]; then
-              add_err "Запрещено изменять или удалять конфигурационные файлы валидатора (\`$f\`)."
+
+          for file in "${changed_files[@]}"; do
+            if [[ "$file" =~ ^\.github/ ]]; then
+              add_err "Запрещено изменять или удалять конфигурационные файлы валидатора (\`$file\`)."
               continue
             fi
-            if [[ ! "$f" =~ ^[^/]+_[^/]+_[^/]+/ ]]; then
-              add_err "Файл \`$f\` изменен или удален вне Вашей персональной папки. Соблюдайте изоляцию!"
+
+            if [[ ! "$file" =~ ^[^/]+_[^/]+_[^/]+/ ]]; then
+              add_err "Файл \`$file\` изменен или удален вне Вашей персональной папки. Соблюдайте изоляцию!"
               continue
             fi
-            
-            current_dir="${f%%/*}"
+
+            current_dir="${file%%/*}"
+
             if [ -z "$STUDENT_DIR" ]; then
               STUDENT_DIR="$current_dir"
             elif [ "$STUDENT_DIR" != "$current_dir" ]; then
@@ -81,38 +98,40 @@ jobs:
             fi
           done
 
-          if [ $errors_count -gt 0 ] || [ -z "$STUDENT_DIR" ]; then
+          if [ "$errors_count" -gt 0 ] || [ -z "$STUDENT_DIR" ]; then
             report+=$'\n'"⛔ **Критическая ошибка изоляции. Проверка кода остановлена.**"
+
             {
               echo "status=failed"
               echo "report<<EOF_REPORT"
               echo "$report"
               echo "EOF_REPORT"
             } >> "$GITHUB_OUTPUT"
+
             echo "$report" >> "$GITHUB_STEP_SUMMARY"
             exit 1
           fi
 
           add_ok "Контроль изоляции пройден. Ваша рабочая директория: \`$STUDENT_DIR/\`"
 
-          # 3. Парсинг имени, фамилии и умная транслитерация латиницы
+          # Парсинг фамилии, имени и группы из имени папки.
           IFS='_' read -r last_name first_name group <<< "$STUDENT_DIR"
-          
+
           to_cyrillic() {
             echo "$1" | sed '
-              s/ch/ч/g; s/sh/ш/g; s/zh/ж/g; s/kh/х/g; s/ts/ц/g; 
+              s/ch/ч/g; s/sh/ш/g; s/zh/ж/g; s/kh/х/g; s/ts/ц/g;
               s/ya/я/g; s/yu/ю/g; s/ye/е/g; s/yo/ё/g; s/ja/я/g;
               s/CH/ч/g; s/SH/ш/g; s/ZH/ж/g; s/KH/х/g; s/TS/ц/g;
               s/YA/я/g; s/YU/ю/g; s/YE/е/g; s/YO/ё/g; s/JA/я/g;
-              s/a/а/g;  s/b/б/g;  s/v/в/g;  s/g/г/g;  s/d/д/g; 
-              s/e/е/g;  s/z/з/g;  s/i/и/g;  s/j/й/g;  s/k/к/g; 
-              s/l/л/g;  s/m/м/g;  s/n/н/g;  s/o/о/g;  s/p/п/g; 
-              s/r/р/g;  s/s/с/g;  s/t/т/g;  s/u/у/g;  s/f/ф/g; 
+              s/a/а/g;  s/b/б/g;  s/v/в/g;  s/g/г/g;  s/d/д/g;
+              s/e/е/g;  s/z/з/g;  s/i/и/g;  s/j/й/g;  s/k/к/g;
+              s/l/л/g;  s/m/м/g;  s/n/н/g;  s/o/о/g;  s/p/п/g;
+              s/r/р/g;  s/s/с/g;  s/t/т/g;  s/u/у/g;  s/f/ф/g;
               s/h/х/g;  s/c/ц/g;  s/y/ы/g;  s/q/к/g;  s/w/в/g; s/x/кс/g;
               s/A/а/g;  s/B/б/g;  s/V/в/g;  s/G/г/g;  s/D/д/g;
-              s/E/е/g;  s/Z/з/g;  s/I/и/g;  s/J/й/g;  s/K/к/g; 
-              s/L/л/g;  s/M/м/g;  s/N/н/g;  s/O/о/g;  s/P/п/g; 
-              s/R/р/g;  s/S/с/g;  s/T/т/g;  s/U/у/g;  s/F/ф/g; 
+              s/E/е/g;  s/Z/з/g;  s/I/и/g;  s/J/й/g;  s/K/к/g;
+              s/L/л/g;  s/M/м/g;  s/N/н/g;  s/O/о/g;  s/P/п/g;
+              s/R/р/g;  s/S/с/g;  s/T/т/g;  s/U/у/g;  s/F/ф/g;
               s/H/х/g;  s/C/ц/g;  s/Y/ы/g;  s/Q/к/g;  s/W/в/g; s/X/кс/g
             '
           }
@@ -122,7 +141,7 @@ jobs:
 
           N=${#last_name_cyr}
           M=${#first_name_cyr}
-          
+
           expected_basis=$(( (N * 12) + 180 ))
           expected_gap=$(( (M * 2) + 4 ))
 
@@ -134,10 +153,16 @@ jobs:
           HTML_FILE="$STUDENT_DIR/index.html"
           CSS_FILE="$STUDENT_DIR/css/style.css"
 
-          # 4. Проверка наличия и контента файлов
-          if [ ! -f "$HTML_FILE" ]; then add_err "Файл \`index.html\` не найден в папке \`$STUDENT_DIR/\`."; fi
-          if [ ! -f "$CSS_FILE" ]; then add_err "Файл \`css/style.css\` не найден в папке \`$STUDENT_DIR/\`."; fi
+          # Проверка наличия файлов.
+          if [ ! -f "$HTML_FILE" ]; then
+            add_err "Файл \`index.html\` не найден в папке \`$STUDENT_DIR/\`."
+          fi
 
+          if [ ! -f "$CSS_FILE" ]; then
+            add_err "Файл \`css/style.css\` не найден в папке \`$STUDENT_DIR/\`."
+          fi
+
+          # Проверка содержимого, если оба файла существуют.
           if [ -f "$CSS_FILE" ] && [ -f "$HTML_FILE" ]; then
             report+="#### 🔍 Результаты содержательного анализа кода:"$'\n'
             css_clean=$(tr -d '[[:space:]]' < "$CSS_FILE")
@@ -173,12 +198,12 @@ jobs:
             fi
           fi
 
-          # 5. Экспертный Git Commit Линтер
+          # Проверка сообщений коммитов.
           report+=$'\n'"#### 📜 Валидация истории коммитов Git:"$'\n'
-          
+
           commit_messages=()
-          while IFS= read -r msg; do
-            commit_messages+=("$msg")
+          while IFS= read -r message; do
+            commit_messages+=("$message")
           done < <(git log "origin/${BASE_REF}...HEAD" --format=%s)
 
           commit_count=${#commit_messages[@]}
@@ -191,27 +216,27 @@ jobs:
           valid_tag_regex="^\[flex-(nav|grid|card-inner|a11y)\]"
           bad_commits=0
 
-          for msg in "${commit_messages[@]}"; do
-            if [[ "$msg" =~ $valid_tag_regex ]]; then
-              report+="  - ✅ Коммит: \`$msg\` (Семантический тег валиден)"$'\n'
+          for message in "${commit_messages[@]}"; do
+            if [[ "$message" =~ $valid_tag_regex ]]; then
+              report+="  - ✅ Коммит: \`$message\` (Семантический тег валиден)"$'\n'
             else
-              report+="  - ❌ Коммит: \`$msg\` (Ошибка! Сообщение должно начинаться с [flex-nav], [flex-grid], [flex-card-inner] или [flex-a11y])"$'\n'
-              bad_commits=$((bad_commits+1))
+              report+="  - ❌ Коммит: \`$message\` (Ошибка! Сообщение должно начинаться с [flex-nav], [flex-grid], [flex-card-inner] или [flex-a11y])"$'\n'
+              bad_commits=$((bad_commits + 1))
             fi
           done
 
-          if [ $bad_commits -gt 0 ]; then
+          if [ "$bad_commits" -gt 0 ]; then
             add_err "В истории Git обнаружено $bad_commits коммитов с некорректными сообщениями. Отредактируйте историю через \`git rebase -i\`."
           else
             add_ok "Все коммиты оформлены строго по семантическому стандарту ТЗ!"
           fi
 
-          # Итоговый статус
+          # Итог проверки.
           report+=$'\n'"#### 📈 Итоги проверки:"$'\n'
           report+="- Критических ошибок: **$errors_count**"$'\n'
           report+="- Предупреждений: **$warnings_count**"$'\n\n'
 
-          if [ $errors_count -gt 0 ]; then
+          if [ "$errors_count" -gt 0 ]; then
             report+="❌ **Статус:** Пулл-реквест отклонен. Исправьте ошибки кода или коммитов, чтобы преподаватель принял работу."
             status_flag="failed"
           else
@@ -225,32 +250,9 @@ jobs:
             echo "$report"
             echo "EOF_REPORT"
           } >> "$GITHUB_OUTPUT"
+
           echo "$report" >> "$GITHUB_STEP_SUMMARY"
 
-          if [ "$status_flag" == "failed" ]; then exit 1; fi
-
-                # 6. Публикация развернутого ответа робота прямо в Pull Request студента
-      - name: Публикация отчета робота в Pull Request
-        if: always() && github.event_name == 'pull_request_target' && steps.analyzer.outputs.report != ''
-        uses: thollander/actions-comment-pull-request@v3
-        with:
-          message: ${{ steps.analyzer.outputs.report }}
-          comment-tag: "validation-report"
-          mode: recreate
-
-      # 7. Автоматическое одобрение (Approve) PR при успешной проверке
-      - name: Автоматический Approve от робота
-        if: github.event_name == 'pull_request_target' && steps.analyzer.outputs.status == 'success'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh pr review "${{ github.event.pull_request.number }}" --approve --body "✅ Автоматический Approve: код, формулы Анти-ИИ и история Git-коммитов полностью соответствуют ТЗ." || true
-
-      # 8. Запрос изменений (Request Changes) при провале проверки
-      - name: Отклонение PR при наличии ошибок
-        if: failure() && github.event_name == 'pull_request_target' && steps.analyzer.outputs.status == 'failed'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh pr review "${{ github.event.pull_request.number }}" --request-changes --body "❌ Обнаружены ошибки в коде или коммитах. Подробности в отчете робота выше." || true
-
+          if [ "$status_flag" = "failed" ]; then
+            exit 1
+          fi
