@@ -166,11 +166,22 @@ article dl {
 }
 
 article dt {
-  flex: 1 0 15%;
+  flex: 1 0 20%;
 }
 
 article dd {
-  flex: 1 1 calc(100% - 15% - calc(4 * 2px + 4px));
+  flex: 1 1 calc(100% - 20% - calc(4 * 2px + 4px));
+}
+
+.urgent-log {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+@media (min-width: 1024px) {
+  .is-lead {
+    order: 1;
+  }
 }
 
 /*
