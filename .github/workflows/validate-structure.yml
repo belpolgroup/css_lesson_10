@@ -229,13 +229,13 @@ jobs:
 
           if [ "$status_flag" == "failed" ]; then exit 1; fi
 
-          # 6. Публикация развернутого ответа робота прямо в Pull Request студента
+                # 6. Публикация развернутого ответа робота прямо в Pull Request студента
       - name: Публикация отчета робота в Pull Request
         if: always() && github.event_name == 'pull_request_target' && steps.analyzer.outputs.report != ''
         uses: thollander/actions-comment-pull-request@v3
         with:
           message: ${{ steps.analyzer.outputs.report }}
-          comment_tag: "validation-report"
+          comment-tag: "validation-report"
           mode: recreate
 
       # 7. Автоматическое одобрение (Approve) PR при успешной проверке
