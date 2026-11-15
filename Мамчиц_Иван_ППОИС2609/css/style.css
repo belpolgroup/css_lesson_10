@@ -39,7 +39,7 @@ body {
   align-items: center;
   gap: calc(4 * 2px + 4px); /*Индивидуальное значение расстояния между элементами (Иван = 4 буквы)*/
   flex-wrap: wrap;
-  min-width: 220px;
+  min-width: 200px;
 }
 
 .logo {
@@ -56,6 +56,9 @@ body {
 
 .nav-menu ul {
   list-style: none;
+  display: flex;
+  gap: calc(4 * 2px + 4px); /*Индивидуальное значение расстояния между элементами (Иван = 4 буквы)*/
+  flex-wrap: wrap;
 }
 
 .nav-link {
@@ -99,8 +102,11 @@ main {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   border: 1px solid #e9ecef;
   flex-basis: calc((6 * 12px) + 180px); /*Индивидуальное значение ширины каточки (Мамчиц = 6 букв)*/
+  gap: calc(4 * 2px + 4px); /*Индивидуальное значение расстояния между элементами (Иван = 4 буквы)*/
   display: flex;
   flex-direction: column;
+  flex-grow: 1;
+  flex-shrink: 1;
 }
 
 .stat-card.is-lead {
@@ -153,9 +159,26 @@ a.nav-link:focus-visible, .logout-btn:focus-visible {
   color: #4c6ef5;
 }
 
+article dl {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(4 * 2px + 4px); /*Индивидуальное значение расстояния между элементами (Иван = 4 буквы)*/
+}
+
+article dt {
+  flex: 1 0 15%;
+}
+
+article dd {
+  flex: 1 1 calc(100% - 15% - calc(4 * 2px + 4px));
+}
+
 /*
 1. Флекс-элементы удерживают свою высоту одинаковой за счет свойства по умолчанию align-items: stretch, 
 которое растягивает элементы по всей доступной высоте
 2. Значение auto в свойстве flex-basis расчитывает ширину элемента на основе его контента, 
 если размер элемента не указан явно 
+3. Элемент со свойством flex: 1 0 auto займет все доступное место, 
+если у другого элемента grow не больше, при попытке сжатия не сожмется, при уменьшении экрана менее, 
+необходимого по контенту, будет обрезаться
 */
