@@ -149,3 +149,35 @@ body {
 .logout-btn {
   margin-left: auto;
 }
+
+/* ==========================================================================
+   [flex-grid] Многострочный ряд карточек
+   flex-basis = (6 * 12) + 180 = 252px
+   ========================================================================== */
+
+.dashboard-grid {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 22px;
+}
+
+.stat-card {
+  flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis: 252px;
+  /* без этого карточка не сожмётся уже своего самого длинного слова */
+  min-width: 0;
+}
+
+/* на телефоне лид-карточка стоит первой, как в HTML */
+.stat-card.is-lead {
+  order: 0;
+}
+
+/* на десктопе она уходит в конец ряда: у остальных order 0, у неё 1 */
+@media (min-width: 1024px) {
+  .stat-card.is-lead {
+    order: 1;
+  }
+}
