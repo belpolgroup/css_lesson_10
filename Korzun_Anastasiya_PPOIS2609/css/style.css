@@ -181,3 +181,63 @@ body {
     order: 1;
   }
 }
+
+/* ==========================================================================
+   [flex-card-inner] Внутренняя структура карточки
+   ========================================================================== */
+
+/* карточка внутри — вертикальный флекс: заголовок, текст, список */
+.stat-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.card-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* расстояния теперь даёт gap карточки, поэтому свои отступы убираю.
+   flex-grow прижимает список метаданных к низу карточки */
+.card-desc {
+  margin-top: 0;
+  margin-bottom: 0;
+  flex-grow: 1;
+  /* стресс-тест 320px: длинное слово переносится, а не распирает макет */
+  overflow-wrap: break-word;
+}
+
+/* список определений: пары dt + dd в одну строку */
+.meta-list {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 0.75rem;
+  row-gap: 0.25rem;
+}
+
+.meta-list dt {
+  flex: 0 0 35%;
+}
+
+.meta-list dd {
+  flex: 1 1 55%;
+  min-width: 0;
+  margin-bottom: 0;
+  overflow-wrap: break-word;
+}
+
+/* узкий экран: значение переносится под свой термин */
+@media (max-width: 479px) {
+  body {
+    padding: 1rem;
+  }
+
+  .meta-list dt,
+  .meta-list dd {
+    flex-basis: 100%;
+  }
+}
