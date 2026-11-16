@@ -1,0 +1,195 @@
+/* ==========================================================================
+   Базовые декоративные стили для Практической работы №10
+   ⚠️ ВНИМАНИЕ: Свойства Flexbox в этом файле отсутствуют. 
+   Вам необходимо настроить раскладку самостоятельно в соответствии с ТЗ!
+   ========================================================================== */
+
+/* Обнуление базовых отступов */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Оформление страницы */
+body {
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
+  background-color: #f4f6f9;
+  color: #212529;
+  padding: 2rem;
+  line-height: 1.5;
+}
+
+/* Декоративные стили шапки */
+.main-header {
+  background-color: #1a1a2e;
+  color: white;
+  padding: 1rem 1.5rem;
+  border-radius: 6px;
+  margin-bottom: 2rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: calc(4 * 2px + 4px); /*Индивидуальное значение расстояния между элементами (Иван = 4 буквы)*/
+  flex-wrap: wrap;
+  min-width: 200px;
+}
+
+.logo {
+  font-weight: 700;
+  font-size: 1.25rem;
+  letter-spacing: -0.02em;
+  flex-shrink: 1;
+}
+
+.nav-menu {
+  flex-shrink: 1;
+  min-width: 50px;
+}
+
+.nav-menu ul {
+  list-style: none;
+  display: flex;
+  gap: calc(4 * 2px + 4px); /*Индивидуальное значение расстояния между элементами (Иван = 4 буквы)*/
+  flex-wrap: wrap;
+}
+
+.nav-link {
+  color: #adb5bd;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.nav-link:hover {
+  color: white;
+}
+
+.logout-btn {
+  background-color: #fa5252;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background-color 0.2s ease;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.logout-btn:hover {
+  background-color: #e03131;
+}
+
+.dashboard-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(4 * 2px + 4px); /*Индивидуальное значение расстояния между элементами (Иван = 4 буквы)*/
+}
+
+/* Декоративные стили карточек дашборда */
+.stat-card {
+  background-color: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e9ecef;
+  flex-basis: calc((6 * 12px) + 180px); /*Индивидуальное значение ширины каточки (Мамчиц = 6 букв)*/
+  gap: calc(4 * 2px + 4px); /*Индивидуальное значение расстояния между элементами (Иван = 4 буквы)*/
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  flex-shrink: 1;
+}
+
+.stat-card.is-lead {
+  border-left: 5px solid #4c6ef5;
+}
+
+.card-header h2 {
+  font-size: 1.15rem;
+  color: #495057;
+}
+
+.card-desc {
+  color: #6c757d;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+a.nav-link:focus-visible, .logout-btn:focus-visible {
+  color: white;
+  outline: 2px solid #eed115;
+  border-radius: 5px;
+}
+
+/* Декоративные элементы уровня PRO */
+.meta-list {
+  background-color: #f8f9fa;
+  padding: 0.8rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+}
+
+.meta-list dt {
+  font-weight: 600;
+  color: #495057;
+}
+
+.meta-list dd {
+  color: #212529;
+  margin-bottom: 0.2rem;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: 4px;
+  background-color: #edf2ff;
+  color: #4c6ef5;
+}
+
+article dl {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(4 * 2px + 4px); /*Индивидуальное значение расстояния между элементами (Иван = 4 буквы)*/
+}
+
+article dt {
+  flex: 1 0 20%;
+}
+
+article dd {
+  flex: 1 1 calc(100% - 20% - calc(4 * 2px + 4px));
+}
+
+.urgent-log {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+@media (min-width: 1024px) {
+  .is-lead {
+    order: 1;
+  }
+}
+
+/*
+1. Флекс-элементы удерживают свою высоту одинаковой за счет свойства по умолчанию align-items: stretch, 
+которое растягивает элементы по всей доступной высоте
+2. Значение auto в свойстве flex-basis расчитывает ширину элемента на основе его контента, 
+если размер элемента не указан явно 
+3. Элемент со свойством flex: 1 0 auto займет все доступное место, 
+если у другого элемента grow не больше, при попытке сжатия не сожмется, при уменьшении экрана менее, 
+необходимого по контенту, будет обрезаться
+*/
