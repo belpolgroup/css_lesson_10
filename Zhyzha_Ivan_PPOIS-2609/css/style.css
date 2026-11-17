@@ -158,3 +158,41 @@ body {
   flex-basis: 228px;
   min-width: 0;
 }
+
+.stat-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.card-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.card-desc {
+  margin: 0;
+}
+
+.meta-list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 12px;
+  margin-top: auto;
+}
+
+.meta-list dt {
+  flex: 0 0 40%;
+  min-width: 0;
+}
+
+.meta-list dd {
+  flex: 1 1 calc(60% - 12px);
+  min-width: 0;
+  margin: 0;
+  overflow-wrap: break-word;
+}
