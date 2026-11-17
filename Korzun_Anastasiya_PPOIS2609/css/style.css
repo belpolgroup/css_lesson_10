@@ -1,0 +1,288 @@
+/* ==========================================================================
+   Базовые декоративные стили для Практической работы №10
+   ⚠️ ВНИМАНИЕ: Свойства Flexbox в этом файле отсутствуют. 
+   Вам необходимо настроить раскладку самостоятельно в соответствии с ТЗ!
+   ========================================================================== */
+
+/* Обнуление базовых отступов */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Оформление страницы */
+body {
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
+  background-color: #f4f6f9;
+  color: #212529;
+  padding: 2rem;
+  line-height: 1.5;
+}
+
+/* Декоративные стили шапки */
+.main-header {
+  background-color: #1a1a2e;
+  color: white;
+  padding: 1rem 1.5rem;
+  border-radius: 6px;
+  margin-bottom: 2rem;
+}
+
+.logo {
+  font-weight: 700;
+  font-size: 1.25rem;
+  letter-spacing: -0.02em;
+}
+
+.nav-menu ul {
+  list-style: none;
+}
+
+.nav-link {
+  color: #adb5bd;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.nav-link:hover {
+  color: white;
+}
+
+.logout-btn {
+  background-color: #fa5252;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background-color 0.2s ease;
+}
+
+.logout-btn:hover {
+  background-color: #e03131;
+}
+
+/* Декоративные стили карточек дашборда */
+.stat-card {
+  background-color: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e9ecef;
+}
+
+.stat-card.is-lead {
+  border-left: 5px solid #4c6ef5;
+}
+
+.card-header h3 {
+  font-size: 1.15rem;
+  color: #495057;
+}
+
+.card-desc {
+  color: #6c757d;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Декоративные элементы уровня PRO */
+.meta-list {
+  background-color: #f8f9fa;
+  padding: 0.8rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+}
+
+.meta-list dt {
+  font-weight: 600;
+  color: #495057;
+}
+
+.meta-list dd {
+  color: #212529;
+  margin-bottom: 0.2rem;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: 4px;
+  background-color: #edf2ff;
+  color: #4c6ef5;
+}
+
+/* ==========================================================================
+   [flex-nav] Шапка и верхнее меню
+   Корзун Анастасия, ППОИС2609: N = 6 (Корзун), M = 9 (Анастасия)
+   gap = (9 * 2) + 4 = 22px
+   ========================================================================== */
+
+.main-header {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 22px;
+}
+
+/* сам список ссылок тоже флекс-контейнер, иначе пункты идут столбиком */
+.nav-menu ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 22px;
+}
+
+/* кнопка сама забирает всё свободное место слева от себя и уезжает вправо */
+.logout-btn {
+  margin-left: auto;
+}
+
+/* ==========================================================================
+   [flex-grid] Многострочный ряд карточек
+   flex-basis = (6 * 12) + 180 = 252px
+   ========================================================================== */
+
+.dashboard-grid {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 22px;
+}
+
+.stat-card {
+  flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis: 252px;
+  /* без этого карточка не сожмётся уже своего самого длинного слова */
+  min-width: 0;
+}
+
+/* на телефоне лид-карточка стоит первой, как в HTML */
+.stat-card.is-lead {
+  order: 0;
+}
+
+/* на десктопе она уходит в конец ряда: у остальных order 0, у неё 1 */
+@media (min-width: 1024px) {
+  .stat-card.is-lead {
+    order: 1;
+  }
+}
+
+/* ==========================================================================
+   [flex-card-inner] Внутренняя структура карточки
+   ========================================================================== */
+
+/* карточка внутри — вертикальный флекс: заголовок, текст, список */
+.stat-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.card-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* расстояния теперь даёт gap карточки, поэтому свои отступы убираю.
+   flex-grow прижимает список метаданных к низу карточки */
+.card-desc {
+  margin-top: 0;
+  margin-bottom: 0;
+  flex-grow: 1;
+  /* стресс-тест 320px: длинное слово переносится, а не распирает макет */
+  overflow-wrap: break-word;
+}
+
+/* список определений: пары dt + dd в одну строку */
+.meta-list {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 0.75rem;
+  row-gap: 0.25rem;
+}
+
+.meta-list dt {
+  flex: 0 0 35%;
+}
+
+.meta-list dd {
+  flex: 1 1 55%;
+  min-width: 0;
+  margin-bottom: 0;
+  overflow-wrap: break-word;
+}
+
+/* узкий экран: значение переносится под свой термин */
+@media (max-width: 479px) {
+  body {
+    padding: 1rem;
+  }
+
+  .meta-list dt,
+  .meta-list dd {
+    flex-basis: 100%;
+  }
+}
+
+/* ==========================================================================
+   [flex-a11y] Видимый фокус при навигации с клавиатуры
+   ========================================================================== */
+
+.nav-link:focus-visible,
+.logout-btn:focus-visible {
+  outline: 3px solid #ffd43b;
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.nav-link:focus-visible {
+  color: white;
+}
+
+/* Своими словами */
+
+/*
+1. Одинаковую высоту в ряду даёт align-items со значением stretch. Его даже
+   не нужно писать, оно стоит у флекс-контейнера по умолчанию: каждый элемент
+   растягивается по поперечной оси на всю высоту своей строки. А высота строки
+   равна самому высокому элементу в ней. У меня карточка с длинным логом самая
+   высокая, и две соседние в этом же ряду подтягиваются под неё. Если
+   поставить align-items: flex-start, карточки станут разной высоты, каждая
+   по своему контенту.
+
+2. flex-basis: auto значит «возьми стартовый размер из width элемента
+   (или height, если ось вертикальная)». Если width тоже не задан, размер
+   берётся по содержимому. То есть auto сам ничего не задаёт, а смотрит
+   сначала на width, потом на контент. От этого стартового размера потом
+   уже считаются flex-grow и flex-shrink. Поэтому у карточек я ставлю не
+   auto, а конкретные 252px: все карточки стартуют с одной ширины и
+   не зависят от длины текста внутри.
+
+3. flex: 1 0 auto — это flex-grow: 1, flex-shrink: 0, flex-basis: auto.
+   Когда места не хватает, grow вообще не участвует, он работает только
+   со свободным местом. А shrink: 0 запрещает сжиматься, так что элемент
+   останется шириной со свой контент (или width) и не станет уже.
+   Дальше два варианта: если у контейнера есть flex-wrap: wrap, элемент
+   перенесётся на новую строку и там уже растянется за счёт grow: 1.
+   Если переноса нет (nowrap), элемент вылезет за край контейнера и
+   появится горизонтальная прокрутка. Соседние элементы с shrink: 1
+   при этом будут сжиматься вместо него.
+*/
