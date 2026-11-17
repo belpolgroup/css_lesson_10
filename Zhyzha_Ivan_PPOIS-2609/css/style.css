@@ -1,36 +1,27 @@
-/* ==========================================================================
-   Базовые декоративные стили для Практической работы №10
-   ⚠️ ВНИМАНИЕ: Свойства Flexbox в этом файле отсутствуют. 
-   Вам необходимо настроить раскладку самостоятельно в соответствии с ТЗ!
-   ========================================================================== */
-
-/* Обнуление базовых отступов */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* Оформление страницы */
 body {
-  font-family:
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    Roboto,
-    sans-serif;
+  font-family: system-ui, "Segoe UI", Roboto, Arial, sans-serif;
   background-color: #f4f6f9;
   color: #212529;
-  padding: 2rem;
+  padding: clamp(1rem, 4vw, 2rem);
   line-height: 1.5;
 }
 
-/* Декоративные стили шапки */
 .main-header {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
   background-color: #1a1a2e;
-  color: white;
-  padding: 1rem 1.5rem;
+  color: #ffffff;
+  padding: 1rem clamp(1rem, 3vw, 1.5rem);
   border-radius: 6px;
   margin-bottom: 2rem;
 }
@@ -42,10 +33,16 @@ body {
 }
 
 .nav-menu ul {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
   list-style: none;
 }
 
 .nav-link {
+  background-color: #1a1a2e;
   color: #adb5bd;
   text-decoration: none;
   font-weight: 500;
@@ -53,12 +50,14 @@ body {
 }
 
 .nav-link:hover {
-  color: white;
+  background-color: #1a1a2e;
+  color: #ffffff;
 }
 
 .logout-btn {
-  background-color: #fa5252;
-  color: white;
+  margin-left: auto;
+  background-color: #c92a2a;
+  color: #ffffff;
   padding: 0.5rem 1rem;
   border-radius: 4px;
   text-decoration: none;
@@ -67,14 +66,30 @@ body {
 }
 
 .logout-btn:hover {
-  background-color: #e03131;
+  background-color: #a61e1e;
+  color: #ffffff;
 }
 
-/* Декоративные стили карточек дашборда */
+.dashboard-grid {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: 12px;
+}
+
 .stat-card {
-  background-color: white;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis: 228px;
+  min-width: 0;
+  gap: 12px;
+  background-color: #ffffff;
+  color: #212529;
   border-radius: 8px;
-  padding: 1.5rem;
+  padding: clamp(1rem, 3vw, 1.5rem);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   border: 1px solid #e9ecef;
 }
@@ -83,34 +98,55 @@ body {
   border-left: 5px solid #4c6ef5;
 }
 
-.card-header h3 {
+.card-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.card-header h2 {
   font-size: 1.15rem;
+  background-color: #ffffff;
   color: #495057;
 }
 
 .card-desc {
+  background-color: #ffffff;
   color: #6c757d;
   font-size: 0.9rem;
-  margin-top: 0.5rem;
-  margin-bottom: 1.5rem;
+  overflow-wrap: break-word;
 }
 
-/* Декоративные элементы уровня PRO */
 .meta-list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 12px;
+  margin-top: auto;
   background-color: #f8f9fa;
+  color: #212529;
   padding: 0.8rem;
   border-radius: 6px;
   font-size: 0.85rem;
 }
 
 .meta-list dt {
+  flex: 0 0 40%;
+  min-width: 0;
   font-weight: 600;
+  background-color: #f8f9fa;
   color: #495057;
+  overflow-wrap: break-word;
 }
 
 .meta-list dd {
+  flex: 1 1 calc(60% - 12px);
+  min-width: 0;
+  background-color: #f8f9fa;
   color: #212529;
-  margin-bottom: 0.2rem;
+  overflow-wrap: break-word;
 }
 
 .badge {
@@ -123,76 +159,39 @@ body {
   color: #4c6ef5;
 }
 
-.main-header {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
+.nav-link:focus-visible,
+.logout-btn:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 4px;
 }
 
-.nav-menu ul {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 12px;
+@media (min-width: 1024px) {
+  .stat-card.is-lead {
+    order: 1;
+  }
 }
 
-.logout-btn {
-  margin-left: auto;
+@media (max-width: 480px) {
+  .nav-menu {
+    flex-basis: 100%;
+    min-width: 0;
+  }
 }
 
-.dashboard-grid {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  align-items: stretch;
-  gap: 12px;
-}
+/* Своими словами */
 
-.stat-card {
-  flex-grow: 1;
-  flex-shrink: 1;
-  flex-basis: 228px;
-  min-width: 0;
-}
+/*
+1. Свойство align-items: stretch растягивает элементы
+   по поперечной оси. Поэтому карточки в пределах одного
+   ряда имеют одинаковую высоту независимо от содержимого.
 
-.stat-card {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
+2. Значение auto у flex-basis определяет начальный размер
+   элемента на основе заданного размера по главной оси,
+   а при его отсутствии — на основе содержимого.
 
-.card-header {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-}
-
-.card-desc {
-  margin: 0;
-}
-
-.meta-list {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 12px;
-  margin-top: auto;
-}
-
-.meta-list dt {
-  flex: 0 0 40%;
-  min-width: 0;
-}
-
-.meta-list dd {
-  flex: 1 1 calc(60% - 12px);
-  min-width: 0;
-  margin: 0;
-  overflow-wrap: break-word;
-}
+3. При flex: 1 0 auto элемент может увеличиваться при наличии
+   свободного пространства, но не может сжиматься.
+   При недостатке места он сохраняет базовый размер,
+   переносится на другую строку при flex-wrap: wrap
+   или может вызвать переполнение контейнера.
+*/
